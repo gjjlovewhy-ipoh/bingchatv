@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冰茶TV官网</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://gcore.jsdelivr.net/gh/FortAwesome/Font-Awesome/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", "STHeiti", "WenQuanYi Micro Hei", sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .header-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .input-field {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #64748b;
+        }
+        
+        .tab-button:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .tab-button:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tab-button:hover { 
+            background: #e2e8f0; 
+        }
+        
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 16px;
+            border: 1px solid #cbd5e1;
+            border-top: none;
+            background: #f9fafb;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .tab-content.active { 
+            display: block; 
+        }
+        
+        .custom-dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            top: 100%;
+            margin-top: 4px;
+        }
+        
+        .dropdown-content a {
+            color: #1e293b;
+            padding: 10px 14px;
+            display: block;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.2s;
+        }
+        
+        .dropdown-content a:hover { 
+            background: #f1f5f9; 
+        }
+        
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+        
+        .show { display: block; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+        }
+        
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            margin-right: 16px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            margin-right: 8px;
+        }
+        /*顶部播放器样式*/
+        .top-player{
+            max-width:1200px;margin:0 auto 24px;
+        }
+        #topVideo{
+            width:100%;background:#000;border-radius:12px;
+        }
+        .source-switch{
+            display:flex;gap:8px;margin:10px 0;
+        }
+        .src-btn{
+            padding:6px 12px;border:none;border-radius:6px;background:#e2e8f0;cursor:pointer;
+        }
+        .src-btn.active{
+            background:#3b82f6;color:#fff;
+        }
+        .channel-list{
+            display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;max-height:160px;overflow-y:auto;padding:4px;
+        }
+        .chan-btn{
+            padding:5px 10px;background:#3b82f6;color:#fff;border:none;border-radius:6px;cursor:pointer;
+        }
+        .chan-btn:hover{background:#2563eb}
+
+        @media (min-width: 768px) {
+            .grid-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            
+            .full-width {
+                grid-column: 1 / -1;
+            }
+            
+            .buttons-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .container { padding: 16px; }
+            .flex.gap-4 { flex-direction: column; gap: 12px; }
+            .flex.gap-4 button { width: 100%; }
+            .tab-button { padding: 12px; font-size: 14px; }
+            .card { padding: 20px; }
+            input, select { font-size: 16px; }
+            .feature-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            .feature-icon {
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+            
+            .buttons-row {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 页面最顶部播放器区域 -->
+    <div class="top-player">
+        <video id="topVideo" controls autoplay></video>
+        <div class="source-switch">
+            <button class="src-btn active" data-src="https://gh-proxy.org/https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/interfaceTXT.txt">咪咕源</button>
+            <button class="src-btn" data-src="https://live.hacks.tools/tv/iptv4.txt">备用iptv4源</button>
+        </div>
+        <div class="channel-list" id="chanBox">频道加载中...</div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="card mb-8">
+            <div class="header-gradient px-6 py-8">
+                <div class="relative z-10">
+                    <h1 class="text-3xl font-bold text-center mb-4"><i class="fas fa-tv mr-3"></i> 冰茶TV</h1>
+                    <p class="text-lg text-center opacity-90 mb-6">原肥羊TV助手 | 免费分享，用爱发电</p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <div class="status-indicator">
+                            <span class="status-dot"></span>
+                            <span>服务状态：正常</span>
+                        </div>
+                        <div class="status-indicator">
+                            <i class="fas fa-bolt mr-2"></i>
+                            <span>响应速度：快速</span>
+                        </div>
+                        <div class="status-indicator">
+                            <i class="fas fa-shield-alt mr-2"></i>
+                            <span>连接安全：稳定</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            <div class="card p-6">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-network-wired text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">可选轮播设置</h2>
+                        <p class="text-gray-600">IP地址或自定义URL（二选一）</p>
+                    </div>
+                </div>
+                
+                <div class="flex mb-4 mt-4">
+                    <button class="tab-button active" onclick="openTab('ip')">使用IP地址</button>
+                    <button class="tab-button" onclick="openTab('url')">使用自定义URL</button>
+                </div>
+                
+                <div id="ipTab" class="tab-content active">
+                    <p class="text-gray-600 mb-3">输入IP地址(建议用这个填内网ip)</p>
+                    <input type="text" id="ipInput" placeholder="例如: 192.168.1.2" class="input-field w-full p-3">
+                </div>
+                
+                <div id="urlTab" class="tab-content">
+                    <p class="text-gray-600 mb-3">输入自定义URL（可选公共接口）</p>
+                    <div class="flex items-center gap-3">
+                        <select id="protocolSelect" class="input-field p-3 w-28">
+                            <option value="http://">http://</option>
+                            <option value="https://">https://</option>
+                        </select>
+                        <div class="custom-dropdown flex-1">
+                            <input type="text" id="fullUrlInput" placeholder="例如: example.com:35455" class="input-field w-full p-3">
+                            <div id="customDropdown" class="dropdown-content"></div>
+                        </div>
+                    </div>
+                    <p class="text-gray-500 text-sm mt-3"><i class="fas fa-info-circle mr-1"></i> 点击输入框显示公共接口</p>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">加载隐藏频道</h2>
+                        <p class="text-gray-600">输入密码获取更多内容</p>
+                    </div>
+                </div>
+                <input type="text" id="passwordInput" placeholder="请输入密码" class="input-field w-full p-3 mt-4">
+                <p class="text-gray-500 text-sm mt-3"><i class="fas fa-key mr-1"></i> 密码在冰茶通知频道中查找</p>
+            </div>
+
+            <div class="card p-6">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-cog text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">更多选项</h2>
+                        <p class="text-gray-600">自定义您的订阅链接设置</p>
+                    </div>
+                </div>
+                
+                <button onclick="toggleAdvanced()" class="w-full btn-primary p-3 mt-4 flex items-center justify-center">
+                    <i class="fas fa-chevron-down mr-2 transition-transform duration-300" id="advancedIcon"></i> 
+                    <span>展开/收起高级选项</span>
+                </button>
+                
+                <div id="advancedContent" class="hidden mt-6 space-y-4">
+                    <label class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <input type="checkbox" id="lunboCheckbox" checked class="mr-3 h-5 w-5 text-blue-500 rounded">
+                        <span class="text-gray-700 font-medium">包含影视轮播（不勾选则不带此分组）</span>
+                    </label>
+                    
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <select id="playbackSelect" class="input-field p-2 w-auto pr-8">
+                            <option value="7" selected>7天回看</option>
+                            <option value="1">1天回看</option>
+                            <option value="en">英语专用</option>
+                        </select>
+                        <span id="playbackText" class="text-gray-700 font-medium ml-3">7天是gz格式，体积较大，需播放器支持</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-info-circle text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">使用说明</h2>
+                        <p class="text-gray-600">快速了解如何使用冰茶TV</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 space-y-3">
+                    <div class="flex items-start">
+                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                        <p class="text-gray-700">配置IP或URL看轮播，或直接生成订阅链接</p>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                        <p class="text-gray-700">不懂如何配置可不填，使用默认设置</p>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                        <p class="text-gray-700">加入 <a href="https://t.me/x188766" target="_blank" class="text-blue-500 hover:underline font-medium">TG群</a> 获取更多信息</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="full-width mt-8">
+            <div class="buttons-row">
+                <button onclick="copyOverseasJsonLink()" class="btn-primary p-4 flex items-center justify-center">
+                    <i class="fas fa-globe mr-2"></i> 生成ok影视专用订阅
+                </button>
+                <button onclick="copyPlayLink()" class="btn-secondary p-4 flex items-center justify-center">
+                    <i class="fas fa-play mr-2"></i> 生成通用订阅链接
+                </button>
+            </div>
+        </div>
+
+        <div class="full-width mt-6">
+            <textarea id="generatedLink" readonly class="hidden w-full p-3 input-field bg-gray-50" placeholder="生成链接将显示在这里" rows="4"></textarea>
+        </div>
+
+        <div id="customModal" class="modal">
+            <div class="modal-content">
+                <div class="mb-6">
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                    <p id="modalMessage" class="text-gray-700 text-lg"></p>
+                </div>
+                <div class="flex gap-4 justify-center" id="modalButtons"></div>
+            </div>
+        </div>
+
+        <div class="footer mt-8 text-center text-gray-500 text-sm">
+            <p>© <span id="currentYear"></span> 冰茶TV - 免费分享，用爱发电</p>
+            <p class="mt-2">遇到问题？<a href="https://t.me/x188766" target="_blank" class="text-blue-500 hover:underline">加入Telegram群组</a></p>
+        </div>
+    </div>
+
+    <script>
+        // 更新年份
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        // 修复AbortSignal兼容
+        if (!AbortSignal.timeout) {
+            AbortSignal.timeout = ms => {
+                const controller = new AbortController();
+                setTimeout(() => controller.abort(), ms);
+                return controller.signal;
+            };
+        }
+
+        const predefinedUrls = [
+            'https://live.188766.xyz',
+            'https://live.ottiptv.cc',
+            'https://live.iill.top',
+            'https://www.goodiptv.club',
+            'https://live.metshop.top'
+        ];
+        //两个订阅源地址
+        const srcMigu = "https://gh-proxy.org/https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/interfaceTXT.txt";
+        const srcIptv4 = "https://live.hacks.tools/tv/iptv4.txt";
+
+        //====顶部播放器加载源====
+        const videoDom = document.getElementById('topVideo');
+        const chanBox = document.getElementById('chanBox');
+        const srcBtns = document.querySelectorAll('.src-btn');
+        let hlsIns = null;
+        let sourceArr = [];
+        let nowSourceUrl = srcMigu;
+
+        function playVideo(url){
+            if(hlsIns) hlsIns.destroy();
+            if(Hls.isSupported()){
+                hlsIns = new Hls();
+                hlsIns.loadSource(url);
+                hlsIns.attachMedia(videoDom);
+                hlsIns.on(Hls.Events.MANIFEST_PARSED,()=>videoDom.play().catch(e=>{}));
+            }else if(videoDom.canPlayType('application/vnd.apple.mpegurl')){
+                videoDom.src = url;
+                videoDom.play().catch(e=>{});
+            }
+        }
+
+        function loadTxtSource(url){
+            chanBox.innerHTML = "加载频道...";
+            fetch(url)
+            .then(res=>res.text())
+            .then(txt=>{
+                chanBox.innerHTML = '';
+                sourceArr = [];
+                let lines = txt.split('\n').map(i=>i.trim()).filter(i=>i && !i.includes('#genre#'));
+                lines.forEach(item=>{
+                    let arr = item.split(',');
+                    if(arr.length<2 || !arr[1].startsWith('http')) return;
+                    sourceArr.push({name:arr[0],url:arr[1]});
+                    let btn = document.createElement('button');
+                    btn.className='chan-btn';
+                    btn.innerText = arr[0];
+                    btn.onclick = ()=>playVideo(arr[1]);
+                    chanBox.appendChild(btn);
+                })
+                if(sourceArr[0]) playVideo(sourceArr[0].url);
+            }).catch(()=>chanBox.innerText='源加载失败');
+        }
+        //切换源按钮
+        srcBtns.forEach(btn=>{
+            btn.onclick=()=>{
+                srcBtns.forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                nowSourceUrl = btn.dataset.src;
+                loadTxtSource(nowSourceUrl);
+            }
+        })
+        //默认咪咕源
+        loadTxtSource(srcMigu);
+
+        //下拉菜单初始化
+        function initCustomDropdown() {
+            const dropdown = document.getElementById('customDropdown');
+            dropdown.innerHTML = predefinedUrls.map(url => {
+                const displayText = url.replace(/^https?:\/\//, '');
+                return `<a onclick="selectUrl('${displayText}', '${url.startsWith('https://') ? 'https://' : 'http://'}')">${displayText}</a>`;
+            }).join('');
+        }
+
+        function selectUrl(displayText, protocol) {
+            document.getElementById('fullUrlInput').value = displayText;
+            document.getElementById('protocolSelect').value = protocol;
+            document.getElementById('customDropdown').classList.remove('show');
+        }
+
+        document.getElementById('fullUrlInput').addEventListener('focus', function() {
+            document.getElementById('customDropdown').classList.add('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('customDropdown');
+            const input = document.getElementById('fullUrlInput');
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function needsUrlEncoding(str) {
+            return !/%[0-9A-Fa-f]{2}/.test(str) && /[&=?#\s]|[^\x00-\x7F]/.test(str);
+        }
+
+        function getFullUrl() {
+            const protocol = document.getElementById('protocolSelect').value;
+            const domain = document.getElementById('fullUrlInput').value.trim();
+            const fullUrl = domain ? `${protocol}${domain}` : '';
+            return predefinedUrls.includes(fullUrl) ? fullUrl : fullUrl;
+        }
+
+        function showModal(message, buttons) {
+            const modal = document.getElementById('customModal');
+            document.getElementById('modalMessage').innerHTML = message;
+            const buttonsEl = document.getElementById('modalButtons');
+            buttonsEl.innerHTML = buttons.map(btn => 
+                `<button class="btn-primary px-6 py-3" onclick="this.closest('.modal').style.display='none';${btn.onClick ? btn.onClick : ''}">${btn.text}</button>`
+            ).join('');
+            modal.style.display = 'flex';
+        }
+
+        function validateUrlInput(value, callback) {
+            if (predefinedUrls.map(url => url.replace(/^https?:\/\//, '')).includes(value)) {
+                return callback('valid');
+            }
+            if (value && !value.includes(':')) {
+                showModal(`您输入的自定义URL（${value}）缺少端口号。\n通常需要端口号（例如: ${value}:35455）。\n请选择如何处理：`, [
+                    { text: '使用默认端口35455', onClick: "callback('defaultPort')" },
+                    { text: '确定不用端口号', onClick: "callback('noPort')" },
+                    { text: '返回修改', onClick: "callback('edit')" }
+                ]);
+            } else {
+                callback('valid');
+            }
+        }
+
+        function copyToClipboard(text, successMessage) {
+            const generatedLinkArea = document.getElementById('generatedLink');
+            generatedLinkArea.value = text;
+            const showError = () => {
+                generatedLinkArea.classList.remove('hidden');
+                showModal(`复制失败！可手动复制以下链接：<br><textarea readonly class="w-full p-3 border rounded-lg bg-gray-50 mt-2">${text}</textarea>`, [{ text: '确定' }]);
+            };
+
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    generatedLinkArea.classList.add('hidden');
+                    showModal(successMessage, [{ text: '确定' }]);
+                }).catch(showError);
+            } else {
+                generatedLinkArea.classList.remove('hidden');
+                showError();
+            }
+        }
+
+        //修改订阅：ok影视=咪咕源，通用=iptv4源
+        function copyLink(isOverseas) {
+            let link = isOverseas ? srcMigu : srcIptv4;
+            copyToClipboard(link, isOverseas ? '影视专用接口已复制！请粘贴到影视或OK影视的直播接口！' : '订阅链接已复制！请粘贴到播放器中使用！');
+        }
+
+        function copyPlayLink() { copyLink(false); }
+        function copyOverseasJsonLink() { copyLink(true); }
+
+        function toggleAdvanced() {
+            const content = document.getElementById('advancedContent');
+            const icon = document.getElementById('advancedIcon');
+            content.classList.toggle('hidden');
+            
+            if (content.classList.contains('hidden')) {
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        document.getElementById('fullUrlInput').addEventListener('input', function(e) {
+            let value = this.value.trim();
+            const protocolSelect = document.getElementById('protocolSelect');
+            if (value.match(/^https?:\/\//)) {
+                value = value.replace(/^(https?:\/\/)/, '').replace(/\/+$/, '');
+                this.value = value;
+            }
+            const predefinedDomains = predefinedUrls.map(url => url.replace(/^https?:\/\//, ''));
+            if (predefinedDomains.includes(value)) {
+                const matchedUrl = predefinedUrls.find(url => url.replace(/^https?:\/\//, '') === value);
+                protocolSelect.value = matchedUrl.startsWith('https://') ? 'https://' : 'http://';
+            }
+            filterDropdownOptions(value);
+        });
+
+        document.getElementById('fullUrlInput').addEventListener('paste', function(e) {
+            const pastedData = (e.clipboardData || window.clipboardData).getData('text').trim();
+            const protocolSelect = document.getElementById('protocolSelect');
+            if (pastedData.match(/^https?:\/\//)) {
+                e.preventDefault();
+                const cleanedValue = pastedData.replace(/^(https?:\/\/)/, '').replace(/\/+$/, '');
+                this.value = cleanedValue;
+                protocolSelect.value = pastedData.startsWith('https://') ? 'https://' : 'http://';
+            }
+        });
+
+        document.getElementById('fullUrlInput').addEventListener('blur', function() {
+            const value = this.value.trim();
+            if (value) {
+                validateUrlInput(value, result => {
+                    if (result === 'edit') {
+                        this.focus();
+                        this.select();
+                    } else if (result === 'defaultPort') {
+                        this.value = `${value}:35455`;
+                    }
+                });
+            }
+        });
+
+        function filterDropdownOptions(filter) {
+            const options = document.getElementById('customDropdown').getElementsByTagName('a');
+            for (let option of options) {
+                option.style.display = option.textContent.toLowerCase().includes(filter.toLowerCase()) ? 'block' : 'none';
+            }
+        }
+        
+        document.getElementById('playbackSelect').addEventListener('change', function() {
+            const playbackText = document.getElementById('playbackText');
+            if (this.value === '1') {
+                playbackText.textContent = '1天是xml格式，体积小，兼容性更好';
+            } else if (this.value === 'en') {
+                playbackText.textContent = '英语频道专用EPG，兼容其他节目，来自YanG';
+            } else {
+                playbackText.textContent = '7天是gz格式，体积较大，需播放器支持';
+            }
+        });
+
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.getElementById(tabName === 'ip' ? 'fullUrlInput' : 'ipInput').value = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initCustomDropdown();
+            document.getElementById('playbackText').textContent = '7天是gz格式，体积较大，需播放器支持';
+        });
+    </script>
+</body>
+</html>
